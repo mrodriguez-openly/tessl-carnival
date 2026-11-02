@@ -80,6 +80,35 @@ describe('hook a duck', () => {
     expect(state.hook).not.toBeNull();
   });
 
+  it('catches the duck where it is when the hook lands, however the frames fall', () => {
+    // Just inside reach at landing, but out of reach a few frames later.
+    const dx = CATCH_RADIUS - 0.5;
+    const landing = duckPosition(createState().ducks[0], DROP_TIME);
+    for (const dt of [DROP_TIME, 0.04, 0.05, 0.03]) {
+      const state = createState();
+      cast(state, landing.x + dx, landing.y);
+      while (state.hook) step(state, dt);
+      expect(state.score, `steps of ${dt}s`).toBe(DUCK_POINTS[0]);
+    }
+  });
+
+  it('resolves a catch the same way when the hook lands partway through a frame', () => {
+    const scores = [
+      [0.1, 0.45],
+      [0.2, 0.2, 0.15],
+      [0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.07],
+    ].map((frames) => {
+      const state = createState();
+      state.time = 1;
+      const landing = duckPosition(state.ducks[3], state.time + DROP_TIME);
+      cast(state, landing.x + CATCH_RADIUS - 0.5, landing.y);
+      for (const dt of frames) step(state, dt);
+      expect(state.hook).toBeNull();
+      return state.score;
+    });
+    expect(scores).toEqual([DUCK_POINTS[3], DUCK_POINTS[3], DUCK_POINTS[3]]);
+  });
+
   it('ends the round once the last cast lands, and stops casting', () => {
     const state = createState();
     for (let i = 0; i < CASTS_PER_ROUND; i++) castAtDuck(state, i);

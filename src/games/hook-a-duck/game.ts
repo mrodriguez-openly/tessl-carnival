@@ -104,7 +104,9 @@ export function step(state: HookADuckState, dt: number): void {
   if (hook) {
     hook.age += dt;
     if (hook.age >= DROP_TIME) {
-      const duck = duckAt(state.ducks, state.time, hook.x, hook.y);
+      // Find the ducks where they were when the hook landed, not at the end of this frame.
+      const landedAt = state.time - (hook.age - DROP_TIME);
+      const duck = duckAt(state.ducks, landedAt, hook.x, hook.y);
       if (duck) {
         state.score += duck.points;
         state.catches.push({ points: duck.points, x: hook.x, y: hook.y, age: 0 });
