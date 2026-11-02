@@ -1,19 +1,22 @@
 /**
  * The carnival's colours, fonts and sizes. Games draw with these rather than
  * their own values, so every booth on the midway looks like it belongs.
+ *
+ * The colours come from the Catppuccin Frappé palette (v1.8.0):
+ * https://github.com/catppuccin/palette/blob/main/palette.json
  */
 export const theme = {
   colors: {
-    background: '#1b1035',
-    surface: '#2a1a52',
-    text: '#fff8e7',
-    muted: '#b9a9d9',
-    accent: '#ffcc33',
-    danger: '#ff5a5f',
-    stripeA: '#e63946',
-    stripeB: '#fff8e7',
-    water: '#5ec8f2',
-    wood: '#8a5a3b',
+    background: '#303446', // base
+    surface: '#414559', // surface0
+    text: '#c6d0f5', // text
+    muted: '#a5adce', // subtext0
+    accent: '#e5c890', // yellow
+    danger: '#e78284', // red
+    stripeA: '#ea999c', // maroon
+    stripeB: '#f2d5cf', // rosewater
+    water: '#85c1dc', // sapphire
+    wood: '#ef9f76', // peach
   },
   font: {
     family: '"Trebuchet MS", "Segoe UI", system-ui, sans-serif',
