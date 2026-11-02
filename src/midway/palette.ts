@@ -3,55 +3,58 @@ import { theme } from '../carnival';
 const { colors } = theme;
 
 /**
- * The midway map's daytime palette. Tent reds, creams and golds come from the
- * carnival theme; the sky, grass, paths and other scenery shades only the map
- * uses live here.
+ * The midway map's Catppuccin Frappé palette (v1.8.0). Tent reds, creams and
+ * golds come from the carnival theme; the sky, grass, paths and other scenery
+ * shades only the map uses live here, each named after its Frappé colour.
  */
 export const palette = {
-  sky: '#38b4e6',
-  skyHigh: '#1f9bd6',
-  cloud: '#bfeafc',
-  cloudShade: '#94d8f4',
-  haze: '#5fc3b8',
+  sky: '#99d1db', // sky
+  skyHigh: '#8caaee', // blue
+  cloud: '#c6d0f5', // text
+  cloudShade: '#babbf1', // lavender
+  haze: '#81c8be', // teal
 
-  grass: '#a5c43a',
-  grassDark: '#8aab2a',
-  grassEdge: '#7a9a22',
-  grassLight: '#b6d24c',
-  path: '#f3e28e',
-  pathShade: '#e2cd70',
-  hedge: '#6f9a2c',
-  hedgeDark: '#5a8122',
-  hedgeLight: '#86b236',
-  shadow: 'rgba(60, 90, 10, 0.28)',
+  grass: '#a6d189', // green
+  grassDark: '#81c8be', // teal
+  grassEdge: '#81c8be', // teal
+  grassLight: '#a6d189', // green
+  path: '#e5c890', // yellow
+  pathShade: '#ef9f76', // peach
+  hedge: '#81c8be', // teal
+  hedgeDark: '#85c1dc', // sapphire
+  hedgeLight: '#a6d189', // green
+  shadow: 'rgba(35, 38, 52, 0.35)', // crust
 
   red: colors.stripeA,
-  redShade: '#b8283a',
+  redShade: '#e78284', // red
   cream: colors.stripeB,
-  creamShade: '#e3d9c2',
+  creamShade: '#eebebe', // flamingo
   gold: colors.accent,
-  goldShade: '#e0a91c',
-  blue: '#2b8ccc',
-  blueShade: '#1f6aa0',
+  goldShade: '#ef9f76', // peach
+  blue: '#babbf1', // lavender
+  blueShade: '#8caaee', // blue
   sky2: colors.water,
-  pink: '#f59ac0',
-  pinkShade: '#e076a4',
+  pink: '#f4b8e4', // pink
+  pinkShade: '#ca9ee6', // mauve
   wood: colors.wood,
-  woodDark: '#6b4429',
-  woodLight: '#b7834f',
-  board: '#c8955b',
-  metal: '#e9e4f2',
-  metalShade: '#b9b0cc',
+  woodDark: '#626880', // surface2
+  woodLight: '#eebebe', // flamingo
+  board: '#eebebe', // flamingo
+  metal: '#b5bfe2', // subtext1
+  metalShade: '#838ba7', // overlay1
   ink: colors.background,
-  opening: '#4a2a28',
-  closed: '#a99cc4',
-  closedShade: '#8a7daa',
-  white: '#ffffff',
+  opening: '#292c3c', // mantle
+  closed: '#949cbb', // overlay2
+  closedShade: '#737994', // overlay0
+  white: '#c6d0f5', // text
 
   skins: ['#f1c27d', '#c68642', '#8d5524', '#e0ac69', '#ffdbac'],
-  hairs: ['#3b2219', '#1b1035', '#a55728', '#e6c35c', '#6b4429'],
-  shirts: [colors.water, '#7bd389', '#b48ee0', colors.danger, '#2b8ccc', colors.stripeB],
-  pants: ['#2d3a6b', '#3b2a4f', '#5a4a3a'],
-  bunting: [colors.stripeA, colors.accent, '#2b8ccc', colors.stripeB],
-  balloons: [colors.stripeA, colors.accent, '#2b8ccc', colors.water, '#f59ac0'],
+  // crust, surface1, peach, yellow, overlay0
+  hairs: ['#232634', '#51576d', '#ef9f76', '#e5c890', '#737994'],
+  // sapphire, green, mauve, red, lavender, rosewater
+  shirts: [colors.water, '#a6d189', '#ca9ee6', colors.danger, '#babbf1', colors.stripeB],
+  // surface0, surface1, mantle
+  pants: ['#414559', '#51576d', '#292c3c'],
+  bunting: [colors.stripeA, colors.accent, '#babbf1', colors.stripeB],
+  balloons: [colors.stripeA, colors.accent, '#babbf1', colors.water, '#f4b8e4'],
 } as const;
