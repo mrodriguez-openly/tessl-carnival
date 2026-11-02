@@ -85,31 +85,30 @@ export function step(state: WhackAMoleState, dt: number, random: () => number = 
   state.bonks = state.bonks.filter((b) => b.age < 0.3);
   if (state.phase !== 'playing') return;
 
-  state.elapsed += dt;
-  for (const hole of state.holes) hole.up = Math.max(hole.up - dt, 0);
-
-  if (state.elapsed >= ROUND_SECONDS) {
-    state.elapsed = ROUND_SECONDS;
-    for (const hole of state.holes) hole.up = 0;
-    state.phase = 'over';
-    return;
-  }
-
-  // Pop up every mole that fell due during this step, at the time it was due,
-  // so a long step ends up where the same time in short steps would.
-  state.nextMole -= dt;
-  while (state.nextMole <= 0) {
-    const late = -state.nextMole;
-    const dueAt = state.elapsed - late;
-    const up = upTime(dueAt) - late;
-    if (up > 0) {
-      const empty = state.holes.filter((h) => h.up === 0);
-      if (empty.length > 0) {
-        const hole = empty[Math.min(Math.floor(random() * empty.length), empty.length - 1)];
-        hole.up = up;
-      }
+  // Walk the step one pop-up deadline at a time, so each mole picks its hole
+  // from the holes that are empty at the moment it is due. A long step then
+  // ends where the same time in short steps would, holes and all.
+  let remaining = dt;
+  for (;;) {
+    if (remaining >= ROUND_SECONDS - state.elapsed) {
+      state.elapsed = ROUND_SECONDS;
+      for (const hole of state.holes) hole.up = 0;
+      state.phase = 'over';
+      return;
     }
-    state.nextMole += spawnInterval(dueAt);
+    const span = Math.min(remaining, state.nextMole);
+    state.elapsed += span;
+    state.nextMole -= span;
+    remaining -= span;
+    for (const hole of state.holes) hole.up = Math.max(hole.up - span, 0);
+    if (state.nextMole > 0) return;
+
+    const empty = state.holes.filter((h) => h.up === 0);
+    if (empty.length > 0) {
+      const hole = empty[Math.min(Math.floor(random() * empty.length), empty.length - 1)];
+      hole.up = upTime(state.elapsed);
+    }
+    state.nextMole += spawnInterval(state.elapsed);
   }
 }
 

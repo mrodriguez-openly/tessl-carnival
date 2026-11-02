@@ -32,26 +32,48 @@ describe('whack-a-mole', () => {
     expect(state.holes[0].up).toBeGreaterThan(0);
   });
 
-  it('catches up on every pop-up that falls due during a long step', () => {
+  it('ends a long step with the same moles up, in the same holes, as short steps', () => {
+    // A seeded random, so each run picks holes the same way and the picks matter.
+    const seeded = () => {
+      let seed = 7;
+      return () => {
+        seed = (seed * 1103515245 + 12345) % 2147483648;
+        return seed / 2147483648;
+      };
+    };
+    const run = (steps: number[]) => {
+      const state = createState();
+      const random = seeded();
+      for (const dt of steps) step(state, dt, random);
+      return state;
+    };
+    const active = (s: ReturnType<typeof createState>) =>
+      s.holes.flatMap((h, index) => (h.up > 0 ? [{ index, up: h.up }] : []));
+
+    const short = run(Array<number>(200).fill(0.05));
+    const partitions = [[2.5, 2.5, 2.5, 2.5], [10], [0.3, 1.7, 0.01, 4.99, 3]];
+    expect(active(short).length).toBeGreaterThan(0);
+    for (const steps of partitions) {
+      const long = run(steps);
+      expect(long.elapsed).toBeCloseTo(short.elapsed, 9);
+      expect(long.nextMole).toBeGreaterThan(0);
+      expect(long.nextMole).toBeCloseTo(short.nextMole, 9);
+      expect(active(long).map((h) => h.index)).toEqual(active(short).map((h) => h.index));
+      active(long).forEach((h, i) => expect(h.up).toBeCloseTo(active(short)[i].up, 9));
+    }
+
+    // The case from review: with random always 0, the second mole goes in
+    // hole 1, because hole 0 is still up when it is due.
     const long = createState();
     step(long, 2.5, () => 0);
-    const short = createState();
-    for (let i = 0; i < 50; i++) step(short, 0.05, () => 0);
-
-    expect(long.nextMole).toBeGreaterThan(0);
-    expect(long.nextMole).toBeCloseTo(short.nextMole, 6);
-    const ups = (s: typeof long) =>
-      s.holes
-        .map((h) => h.up)
-        .filter((up) => up > 0)
-        .sort();
-    expect(ups(long)).toHaveLength(ups(short).length);
-    ups(long).forEach((up, i) => expect(up).toBeCloseTo(ups(short)[i], 6));
+    const steps = createState();
+    for (let i = 0; i < 50; i++) step(steps, 0.05, () => 0);
+    expect(active(long).map((h) => h.index)).toEqual([1]);
+    expect(active(steps).map((h) => h.index)).toEqual([1]);
 
     // No backlog is left for a zero-length step to spawn.
-    const before = ups(long).length;
     step(long, 0, () => 0);
-    expect(ups(long)).toHaveLength(before);
+    expect(active(long).map((h) => h.index)).toEqual([1]);
   });
 
   it('drops a mole back down when its time is up', () => {
