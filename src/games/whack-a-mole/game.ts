@@ -95,14 +95,21 @@ export function step(state: WhackAMoleState, dt: number, random: () => number = 
     return;
   }
 
+  // Pop up every mole that fell due during this step, at the time it was due,
+  // so a long step ends up where the same time in short steps would.
   state.nextMole -= dt;
-  if (state.nextMole <= 0) {
-    const empty = state.holes.filter((h) => h.up === 0);
-    if (empty.length > 0) {
-      const hole = empty[Math.min(Math.floor(random() * empty.length), empty.length - 1)];
-      hole.up = upTime(state.elapsed);
+  while (state.nextMole <= 0) {
+    const late = -state.nextMole;
+    const dueAt = state.elapsed - late;
+    const up = upTime(dueAt) - late;
+    if (up > 0) {
+      const empty = state.holes.filter((h) => h.up === 0);
+      if (empty.length > 0) {
+        const hole = empty[Math.min(Math.floor(random() * empty.length), empty.length - 1)];
+        hole.up = up;
+      }
     }
-    state.nextMole += spawnInterval(state.elapsed);
+    state.nextMole += spawnInterval(dueAt);
   }
 }
 

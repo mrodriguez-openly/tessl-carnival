@@ -32,6 +32,28 @@ describe('whack-a-mole', () => {
     expect(state.holes[0].up).toBeGreaterThan(0);
   });
 
+  it('catches up on every pop-up that falls due during a long step', () => {
+    const long = createState();
+    step(long, 2.5, () => 0);
+    const short = createState();
+    for (let i = 0; i < 50; i++) step(short, 0.05, () => 0);
+
+    expect(long.nextMole).toBeGreaterThan(0);
+    expect(long.nextMole).toBeCloseTo(short.nextMole, 6);
+    const ups = (s: typeof long) =>
+      s.holes
+        .map((h) => h.up)
+        .filter((up) => up > 0)
+        .sort();
+    expect(ups(long)).toHaveLength(ups(short).length);
+    ups(long).forEach((up, i) => expect(up).toBeCloseTo(ups(short)[i], 6));
+
+    // No backlog is left for a zero-length step to spawn.
+    const before = ups(long).length;
+    step(long, 0, () => 0);
+    expect(ups(long)).toHaveLength(before);
+  });
+
   it('drops a mole back down when its time is up', () => {
     const state = createState();
     state.holes[4].up = 0.5;
